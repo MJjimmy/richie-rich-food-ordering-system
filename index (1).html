@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RichieRich — Order Online</title>
+<style>
+  :root{
+    --bg:#f6f5f1; --surface:#fff; --ink:#14161a; --ink2:#5c6066; --faint:#9aa0a6;
+    --line:#e6e4dd; --green:#059669; --green-d:#047857; --green-bg:#ecfdf5;
+    --amber:#d97706; --amber-bg:#fffbeb; --blue:#2563eb; --blue-bg:#eff6ff;
+    --violet:#7c3aed; --violet-bg:#f5f3ff; --zinc:#6b7280; --zinc-bg:#f3f4f6;
+    --red:#dc2626; --wa:#075e54; --wa-bg:#dcf3e5; --r:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; font-size:14px; line-height:1.45;}
+  button{font-family:inherit; cursor:pointer;}
+  input,select,textarea{font-family:inherit; font-size:14px; color:var(--ink);}
+  .hidden{display:none !important;}
+
+  /* ===== top bar ===== */
+  .top{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 20px; background:var(--surface); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:50;}
+  .brand{display:flex; align-items:center; gap:10px;}
+  .logo{width:34px;height:34px;border-radius:10px;background:var(--green);display:flex;align-items:center;justify-content:center;flex:none;}
+  .brand b{font-size:16px; letter-spacing:-.2px;}
+  .pkg{font-size:11px; font-weight:700; color:var(--green-d); background:var(--green-bg); border:1px solid #bbf7d0; padding:3px 9px; border-radius:999px;}
+  .topright{display:flex; align-items:center; gap:12px;}
+  .live{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--ink2);}
+  .live i{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block; animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .views{display:none; background:var(--zinc-bg); border-radius:999px; padding:3px;}
+  .views button{border:0; background:transparent; padding:6px 14px; border-radius:999px; font-size:13px; font-weight:600; color:var(--ink2);}
+  .views button.on{background:var(--surface); color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.12);}
+
+  /* ===== stage layout ===== */
+  .stage{display:grid; grid-template-columns:minmax(380px,460px) minmax(0,1fr); gap:22px; padding:22px; max-width:1460px; margin:0 auto; align-items:start;}
+  .pane{min-width:0;}
+
+  /* ===== browser frame (customer portal) ===== */
+  .frame{background:var(--surface); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 10px 30px rgba(20,22,26,.07);}
+  .fbar{display:flex; align-items:center; gap:10px; padding:10px 14px; background:#faf9f6; border-bottom:1px solid var(--line);}
+  .dots{display:flex; gap:5px;}
+  .dots i{width:10px;height:10px;border-radius:50%;display:block;}
+  .dots i:nth-child(1){background:#f87171;} .dots i:nth-child(2){background:#fbbf24;} .dots i:nth-child(3){background:#34d399;}
+  .furl{flex:1; background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:5px 14px; font-size:12px; color:var(--ink2); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .flk{font-size:11px; color:var(--faint);}
+  .pbody{position:relative; min-height:640px; display:flex; flex-direction:column; background:#fbfaf7;}
+  .scroll{flex:1; overflow-y:auto; max-height:760px;}
+  .scroll::-webkit-scrollbar{width:8px;} .scroll::-webkit-scrollbar-thumb{background:#e2e0d8; border-radius:8px;}
+
+  /* ===== shop header ===== */
+  .shead{padding:18px 16px 10px; background:var(--surface); border-bottom:1px solid var(--line);}
+  .sbrand{display:flex; align-items:center; gap:10px;}
+  .sbrand .logo{width:38px;height:38px;border-radius:11px;}
+  .sbrand b{font-size:17px; display:block; letter-spacing:-.2px;}
+  .open{font-size:11.5px; font-weight:700; color:var(--green-d); background:var(--green-bg); border:1px solid #bbf7d0; padding:2px 8px; border-radius:999px;}
+  .sarea{margin-top:9px; font-size:12px; color:var(--ink2);}
+  .sarea b{color:var(--ink);}
+  .cats{display:flex; gap:8px; padding:12px 16px; overflow-x:auto; background:var(--surface); border-bottom:1px solid var(--line);}
+  .cats::-webkit-scrollbar{display:none;}
+  .cat{flex:none; border:1px solid var(--line); background:var(--surface); padding:6px 14px; border-radius:999px; font-size:12.5px; font-weight:600; color:var(--ink2);}
+  .cat.on{background:var(--ink); border-color:var(--ink); color:#fff;}
+
+  /* ===== menu list ===== */
+  .mlist{padding:12px 14px 20px; display:flex; flex-direction:column; gap:10px;}
+  .mi{display:flex; gap:12px; align-items:center; background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:10px;}
+  .mitile{width:58px;height:58px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;flex:none;}
+  .minfo{flex:1; min-width:0;}
+  .minfo b{font-size:13.5px; display:block;}
+  .minfo .desc{font-size:11.5px; color:var(--ink2); display:block; margin:1px 0 6px;}
+  .mifoot{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .price{font-weight:700; font-size:13.5px;}
+  .addb{border:1px solid var(--green); background:var(--green-bg); color:var(--green-d); font-weight:700; font-size:12.5px; padding:5px 13px; border-radius:999px;}
+  .addb:hover{background:var(--green); color:#fff; border-color:var(--green);}
+  .step{display:flex; align-items:center; gap:2px; border:1px solid var(--green); background:var(--green-bg); border-radius:999px; padding:2px;}
+  .step button{width:26px;height:26px;border:0;background:transparent;color:var(--green-d);font-size:15px;font-weight:700;border-radius:50%;line-height:1;}
+  .step button:hover{background:#d1fae5;}
+  .step b{min-width:22px;text-align:center;font-size:13px;color:var(--green-d);}
+
+  /* ===== cart bar ===== */
+  .cartbar{position:sticky; bottom:0; margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--green); color:#fff; padding:13px 16px;}
+  .cartbar b{font-size:14px;}
+  .cartbar span{font-size:12px; opacity:.85; display:block;}
+  .cartbar button{border:0; background:#fff; color:var(--green-d); font-weight:800; font-size:13px; padding:10px 18px; border-radius:11px;}
+
+  /* ===== portal sub-views ===== */
+  .vhead{display:flex; align-items:center; gap:10px; padding:13px 16px; background:var(--surface); border-bottom:1px solid var(--line);}
+  .backb{border:1px solid var(--line); background:var(--surface); width:32px;height:32px;border-radius:9px;font-size:15px;color:var(--ink2);}
+  .vhead b{font-size:15px;}
+  .vbody{padding:14px 16px 22px; display:flex; flex-direction:column; gap:14px; flex:1;}
+  .block{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:13px;}
+  .block h4{font-size:11px; text-transform:uppercase; letter-spacing:.8px; color:var(--faint); margin-bottom:10px;}
+  .citem{display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px dashed var(--line);}
+  .citem:last-child{border-bottom:0;}
+  .citem .ce{font-size:20px; width:30px; text-align:center; flex:none;}
+  .citem .cn{flex:1; min-width:0; font-size:13px; font-weight:600;}
+  .citem .cn span{display:block; font-weight:400; font-size:11.5px; color:var(--ink2);}
+  .seg{display:flex; background:var(--zinc-bg); border-radius:11px; padding:3px; gap:3px;}
+  .seg button{flex:1; border:0; background:transparent; padding:9px; border-radius:8px; font-size:13px; font-weight:600; color:var(--ink2);}
+  .seg button.on{background:var(--surface); color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.1);}
+  .seg small{display:block; font-size:10.5px; color:var(--faint); font-weight:500;}
+  .fld{display:block; font-size:12px; font-weight:600; color:var(--ink2); margin-bottom:10px;}
+  .fld span{display:block; font-size:10.5px; font-weight:400; color:var(--faint); margin-bottom:4px;}
+  .fld input,.fld select,.fld textarea{width:100%; border:1px solid var(--line); border-radius:9px; padding:9px 11px; background:var(--surface); outline:none; font-weight:500;}
+  .fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--green); box-shadow:0 0 0 3px rgba(5,150,105,.12);}
+  .err{font-size:12px; color:var(--red); font-weight:600; margin-top:8px; min-height:0;}
+  .totrow{display:flex; justify-content:space-between; font-size:13px; color:var(--ink2); padding:3px 0;}
+  .totrow.grand{border-top:1px solid var(--line); margin-top:7px; padding-top:10px; color:var(--ink); font-size:15px; font-weight:800;}
+  .btn{display:block; width:100%; border:0; background:var(--green); color:#fff; font-weight:800; font-size:14.5px; padding:14px; border-radius:12px;}
+  .btn:hover{background:var(--green-d);}
+  .btn:disabled{background:#a7d9c8; cursor:default;}
+  .btn.ghost{background:var(--surface); color:var(--ink); border:1px solid var(--line); font-weight:700;}
+  .btn.ghost:hover{border-color:var(--faint); background:var(--zinc-bg);}
+  .demo-note{font-size:11px; color:var(--faint); text-align:center; margin-top:8px;}
+
+  /* payment methods */
+  .pmtabs{display:flex; gap:8px;}
+  .pmtabs button{flex:1; border:1.5px solid var(--line); background:var(--surface); border-radius:11px; padding:10px 6px; font-size:12.5px; font-weight:700; color:var(--ink2); display:flex; flex-direction:column; align-items:center; gap:5px;}
+  .pmtabs button small{font-weight:500; font-size:10.5px; color:var(--faint);}
+  .pmtabs button.on{border-color:var(--green); background:var(--green-bg); color:var(--green-d);}
+  .payrow{display:flex; gap:10px;}
+  .payrow .fld{flex:1;}
+  .testlink{border:0; background:none; color:var(--green-d); font-size:11.5px; font-weight:700; text-decoration:underline; margin-top:8px; padding:0;}
+  .eftsteps{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--ink2); margin-top:10px;}
+  .eftsteps i{width:8px;height:8px;border-radius:50%;background:var(--line);display:block;}
+  .eftsteps i.on{background:var(--green);}
+  .cashnote{font-size:12.5px; color:var(--ink2); background:var(--amber-bg); border:1px solid #fde68a; border-radius:10px; padding:10px 12px; margin-top:2px;}
+
+  /* ===== success / done ===== */
+  .okwrap{padding:22px 16px 26px; display:flex; flex-direction:column; gap:14px; flex:1;}
+  .oktop{display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center;}
+  .okr{width:64px;height:64px;border-radius:50%;background:var(--green-bg); border:2px solid var(--green); color:var(--green-d); display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;}
+  .oktop b{font-size:18px;}
+  .oktop span{font-size:13px; color:var(--ink2);}
+  .wa-prev{background:var(--wa-bg); border:1px solid #b7e4c7; border-radius:14px; padding:12px; position:relative;}
+  .wa-prev .watag{position:absolute; top:-9px; left:12px; background:var(--wa); color:#fff; font-size:10px; font-weight:800; letter-spacing:.5px; padding:2px 9px; border-radius:999px;}
+  .wabub{background:var(--surface); border-radius:4px 12px 12px 12px; padding:11px 12px; font-size:12.5px; white-space:pre-line; box-shadow:0 1px 2px rgba(0,0,0,.08); line-height:1.5;}
+  .wabub .ts{display:block; text-align:right; color:var(--faint); font-size:10.5px; margin-top:5px;}
+  .track{display:flex; align-items:flex-start; justify-content:space-between; background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:14px 12px;}
+  .tstep{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; position:relative; font-size:10.5px; font-weight:700; color:var(--faint); text-align:center;}
+  .tstep i{width:26px;height:26px;border-radius:50%;background:var(--zinc-bg);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--faint);z-index:1;}
+  .tstep::before{content:""; position:absolute; top:13px; left:-50%; width:100%; height:2px; background:var(--line);}
+  .tstep:first-child::before{display:none;}
+  .tstep.done{color:var(--green-d);}
+  .tstep.done i{background:var(--green); border-color:var(--green); color:#fff;}
+  .tstep.done::before{background:var(--green);}
+  .tstep.cur{color:var(--amber);}
+  .tstep.cur i{background:var(--amber-bg); border-color:var(--amber); color:var(--amber); animation:pulse 1.4s infinite;}
+  .tstep.cur::before{background:var(--green);}
+  .trackhint{font-size:11px; color:var(--faint); text-align:center; margin-top:-6px;}
+
+  /* ===== thermal receipt ===== */
+  .receipt{background:#fff; border:1px solid var(--line); border-radius:10px; padding:16px 14px; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:11.5px; box-shadow:0 2px 8px rgba(0,0,0,.05);}
+  .receipt .rz-c{text-align:center;}
+  .receipt .rz-title{font-size:15px; font-weight:800; letter-spacing:2px;}
+  .receipt hr{border:0; border-top:1px dashed #bbb; margin:8px 0;}
+  .receipt .rz-row{display:flex; justify-content:space-between; gap:10px; padding:1.5px 0;}
+  .receipt .rz-paid{font-weight:700;}
+  .receipt .rz-foot{text-align:center; margin-top:9px; font-size:10.5px; color:#666;}
+
+  /* ===== kitchen ===== */
+  .ktab{background:var(--surface); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 10px 30px rgba(20,22,26,.07);}
+  .kbar{display:flex; align-items:center; gap:10px; padding:10px 14px; background:#1c1e22; color:#fff;}
+  .kbar .furl{background:#2a2d33; border-color:#3a3e45; color:#c8ccd4; flex:0 1 auto; max-width:280px;}
+  .kbar .kstatus{margin-left:auto; display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:#6ee7b7;}
+  .kbar .kstatus i{width:8px;height:8px;border-radius:50%;background:#34d399; animation:pulse 1.6s infinite;}
+  .kbody{padding:18px; display:flex; flex-direction:column; gap:16px; background:#f4f4f2; min-height:640px;}
+  .khead{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .khead b{font-size:18px;}
+  .khead .ksub{font-size:12.5px; color:var(--ink2);}
+  .khead .kspace{margin-left:auto; display:flex; align-items:center; gap:8px;}
+  .kclock{font-variant-numeric:tabular-nums; font-weight:800; font-size:14px; background:var(--surface); border:1px solid var(--line); border-radius:9px; padding:6px 11px;}
+  .kicon{border:1px solid var(--line); background:var(--surface); width:34px; height:34px; border-radius:9px; font-size:14px; color:var(--ink2);}
+  .kicon:hover{border-color:var(--faint);}
+  .kicon.warn{color:var(--red);}
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+  .stat{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:11px 13px;}
+  .stat span{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:var(--faint); display:block;}
+  .stat b{font-size:19px; letter-spacing:-.3px;}
+  .stat b small{font-size:11px; color:var(--faint); font-weight:600;}
+  .kcols{display:grid; grid-template-columns:minmax(0,1.6fr) minmax(260px,1fr); gap:16px; align-items:start; flex:1;}
+  .kcol h3{font-size:12px; text-transform:uppercase; letter-spacing:.8px; color:var(--faint); margin-bottom:10px; display:flex; align-items:center; gap:7px;}
+  .kcol h3 .cnt{background:var(--ink); color:#fff; border-radius:999px; font-size:10.5px; padding:1px 8px;}
+  .ko{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--faint); border-radius:13px; padding:13px; margin-bottom:11px; display:flex; flex-direction:column; gap:9px; animation:slidein .3s ease;}
+  @keyframes slidein{from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:none;}}
+  .ko.new{border-left-color:var(--blue);}
+  .ko.prepping{border-left-color:var(--amber);}
+  .ko.ready{border-left-color:var(--green);}
+  .ko.out{border-left-color:var(--violet);}
+  .ko.done{border-left-color:var(--zinc); opacity:.75;}
+  .ko-top{display:flex; align-items:center; gap:9px; flex-wrap:wrap;}
+  .ko-top b{font-size:14.5px;}
+  .ko-time{font-size:11.5px; color:var(--ink2); font-variant-numeric:tabular-nums;}
+  .ko-badge{margin-left:auto; font-size:10px; font-weight:800; letter-spacing:.6px; padding:3.5px 10px; border-radius:999px;}
+  .ko-badge.new{background:var(--blue-bg); color:var(--blue);}
+  .ko-badge.prepping{background:var(--amber-bg); color:var(--amber);}
+  .ko-badge.ready{background:var(--green-bg); color:var(--green-d);}
+  .ko-badge.out{background:var(--violet-bg); color:var(--violet);}
+  .ko-badge.done{background:var(--zinc-bg); color:var(--zinc);}
+  .ko ul{list-style:none; font-size:12.5px; color:var(--ink2); border-top:1px dashed var(--line); padding-top:8px;}
+  .ko ul li{padding:1.5px 0;}
+  .ko ul li b{color:var(--ink);}
+  .ko-meta{display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:12px; color:var(--ink2);}
+  .payb{font-size:10px; font-weight:800; letter-spacing:.5px; padding:3px 9px; border-radius:999px;}
+  .payb.paid{background:var(--green-bg); color:var(--green-d); border:1px solid #bbf7d0;}
+  .payb.cash{background:var(--amber-bg); color:var(--amber); border:1px solid #fde68a;}
+  .wa-mini{display:inline-flex; align-items:center; gap:4px; color:var(--green-d); font-weight:700;}
+  .ko-foot{display:flex; align-items:center; justify-content:space-between; gap:10px; border-top:1px solid var(--line); padding-top:10px;}
+  .ko-foot .age{font-size:11.5px; color:var(--faint); font-variant-numeric:tabular-nums;}
+  .kobtn{border:0; background:var(--ink); color:#fff; font-weight:800; font-size:13px; padding:10px 18px; border-radius:10px; min-width:150px;}
+  .kobtn:hover{background:#000;}
+  .kobtn.next{background:var(--green);} .kobtn.next:hover{background:var(--green-d);}
+  .ko.done .ko-check{font-size:13px; font-weight:800; color:var(--green-d);}
+  .kempty{background:var(--surface); border:1.5px dashed var(--line); border-radius:13px; padding:34px 20px; text-align:center; color:var(--ink2); font-size:13px;}
+  .kempty b{display:block; font-size:14px; color:var(--ink); margin-bottom:4px;}
+  .kdone{margin-top:4px;}
+  .kdone .ko{padding:9px 13px;}
+  .kdone .ko ul,.kdone .ko-meta{display:none;}
+  .kdone .ko-foot{border:0; padding:0;}
+
+  /* whatsapp automation log */
+  .walog{background:var(--surface); border:1px solid var(--line); border-radius:13px; padding:13px; max-height:520px; overflow-y:auto;}
+  .walog::-webkit-scrollbar{width:8px;} .walog::-webkit-scrollbar-thumb{background:#e2e0d8; border-radius:8px;}
+  .walog .wl-head{display:flex; align-items:center; gap:8px; margin-bottom:11px;}
+  .walog .wl-head .wl-ic{width:30px;height:30px;border-radius:9px;background:var(--wa-bg); display:flex;align-items:center;justify-content:center; font-size:15px;}
+  .walog .wl-head b{font-size:13px; display:block;}
+  .walog .wl-head span{font-size:10.5px; color:var(--faint);}
+  .wl-msg{background:var(--wa-bg); border-radius:10px; padding:9px 11px; margin-bottom:9px; font-size:11.5px; line-height:1.45; animation:slidein .3s ease;}
+  .wl-msg .wl-to{font-size:10px; font-weight:800; color:var(--wa); letter-spacing:.4px; margin-bottom:3px;}
+  .wl-msg .wl-t{white-space:pre-line;}
+  .wl-msg .wl-ts{text-align:right; font-size:10px; color:#7fa98f; margin-top:4px;}
+  .wl-empty{font-size:12px; color:var(--faint); text-align:center; padding:20px 8px;}
+
+  /* ===== toasts ===== */
+  #toasts{position:fixed; left:50%; transform:translateX(-50%); bottom:18px; display:flex; flex-direction:column; gap:8px; z-index:100; width:min(430px, calc(100vw - 28px));}
+  .toast{background:#111b13; color:#e8f5ec; border:1px solid #2c4a38; border-radius:13px; padding:11px 14px; display:flex; gap:10px; align-items:flex-start; box-shadow:0 10px 30px rgba(0,0,0,.28); animation:toastin .3s ease;}
+  @keyframes toastin{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;}}
+  .toast .t-ic{width:26px;height:26px;border-radius:8px;background:var(--wa);flex:none;display:flex;align-items:center;justify-content:center;font-size:13px;}
+  .toast .t-b{flex:1; min-width:0;}
+  .toast .t-b b{font-size:12px; color:#fff; display:block;}
+  .toast .t-b span{font-size:11.5px; color:#a9c9b5; display:block; line-height:1.4;}
+  .toast .t-ck{color:#4ade80; font-weight:800; font-size:11px; white-space:nowrap;}
+
+  footer{max-width:1460px; margin:0 auto; padding:6px 22px 26px; font-size:11.5px; color:var(--faint); display:flex; gap:16px; flex-wrap:wrap;}
+  footer b{color:var(--ink2);}
+
+  /* ===== print ===== */
+  #printArea{display:none;}
+  @media print{
+    body *{visibility:hidden !important;}
+    #printArea, #printArea *{visibility:visible !important;}
+    #printArea{display:block !important; position:absolute; left:0; top:0; width:300px; background:#fff; padding:10px;}
+  }
+
+  /* ===== responsive ===== */
+  @media (max-width:1080px){ .kcols{grid-template-columns:1fr;} .stats{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:920px){
+    .stage{grid-template-columns:1fr; padding:14px;}
+    .views{display:flex;}
+    body.v-portal #paneKitchen{display:none;}
+    body.v-kitchen #panePortal{display:none;}
+    .pkg{display:none;}
+  }
+  @media (min-width:921px){ body.v-kitchen #panePortal{display:none;} body.v-portal #paneKitchen{display:none;} }
+  @media (max-width:480px){
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .ko-top b{font-size:13.5px;}
+    .kobtn{min-width:120px; padding:10px 12px; font-size:12.5px;}
+  }
+</style>
+</head>
+<body class="v-both">
+
+<header class="top">
+  <div class="brand">
+    <div class="logo">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M7 3v7a2 2 0 0 1-2 2H4M7 3v18M4 3v5M17 3c-2 0-3 2-3 5s1 4 3 4v9"/></svg>
+    </div>
+    <b>RichieRich</b>
+    <span class="pkg">Core Automation Package</span>
+  </div>
+  <div class="topright">
+    <span class="live"><i></i> Live sync</span>
+    <div class="views" id="viewSwitch">
+      <button data-v="v-portal" class="on">Customer</button>
+      <button data-v="v-kitchen">Kitchen</button>
+    </div>
+  </div>
+</header>
+
+<main class="stage">
+  <!-- ============ CUSTOMER PORTAL ============ -->
+  <section class="pane" id="panePortal">
+    <div class="frame">
+      <div class="fbar">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="furl">www.richierich.co.za</div>
+        <div class="flk">&#128274; secure</div>
+      </div>
+      <div class="pbody" id="portal"><!-- rendered --></div>
+    </div>
+  </section>
+
+  <!-- ============ KITCHEN DASHBOARD ============ -->
+  <section class="pane" id="paneKitchen">
+    <div class="ktab">
+      <div class="kbar">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="furl">kitchen.richierich.co.za</div>
+        <div class="kstatus"><i></i> Connected</div>
+      </div>
+      <div class="kbody" id="kitchen"><!-- rendered --></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span><b>Prototype</b> — Core Automation Package: digital menu &amp; mobile ordering portal · payment gateway (Card / Instant EFT / Cash) · automated WhatsApp confirmation &amp; receipts · kitchen order dashboard.</span>
+  <span>Demo payments — no real card is charged. Menu, areas and fees are placeholders until confirmed.</span>
+  <span>Tip: open this page in a second tab — order from one, watch the kitchen live in the other.</span>
+</footer>
+
+<div id="toasts"></div>
+<div id="printArea"></div>
+
+<script>
+/* ================= DATA ================= */
+const MENU=[
+  {c:'wraps', g:'linear-gradient(135deg,#fef3c7,#fde68a)', items:[
+    {id:'w1',n:'Chicken Caesar Wrap',d:'Grilled chicken, romaine, parmesan, caesar dressing',p:85,e:'🌯'},
+    {id:'w2',n:'Beef BBQ Wrap',d:'Flame-grilled beef, smoky bbq sauce, onion, pickles',p:95,e:'🥙'},
+    {id:'w3',n:'Halloumi Garden Wrap',d:'Grilled halloumi, avocado, cherry tomato, rocket',p:79,e:'🥪'},
+    {id:'w4',n:'Chicken Shawarma',d:'Marinated chicken, garlic sauce, pickled veg, flatbread',p:75,e:'🌮'}]},
+  {c:'burgers', g:'linear-gradient(135deg,#fee2e2,#fecaca)', items:[
+    {id:'b1',n:'Richy Classic',d:'Double beef, cheddar, smoked bacon, house sauce, brioche',p:120,e:'🍔'},
+    {id:'b2',n:'Double Smash',d:'Two smashed patties, double cheese, caramelised onion',p:155,e:'🍔'},
+    {id:'b3',n:'Crispy Chicken',d:'Buttermilk fried chicken, slaw, pickle, buttermilk sauce',p:105,e:'🍗'}]},
+  {c:'sides', g:'linear-gradient(135deg,#dcfce7,#bbf7d0)', items:[
+    {id:'s1',n:'Fries',d:'Crispy, sea-salted',p:45,e:'🍟'},
+    {id:'s2',n:'Loaded Fries',d:'Cheddar sauce, bacon, jalapeño, spring onion',p:65,e:'🧀'},
+    {id:'s3',n:'Potato Wedges',d:'Rosemary and paprika',p:55,e:'🥔'}]},
+  {c:'drinks', g:'linear-gradient(135deg,#dbeafe,#bfdbfe)', items:[
+    {id:'d1',n:'Fresh Orange Juice',d:'Squeezed to order',p:35,e:'🍊'},
+    {id:'d2',n:'House Lemonade',d:'Lemon, mint, soda',p:30,e:'🍋'},
+    {id:'d3',n:'Coke Can',d:'330ml',p:25,e:'🥤'},
+    {id:'d4',n:'Mineral Water',d:'500ml',p:20,e:'💧'}]}
+];
+const CATS=[['all','All'],['wraps','Wraps'],['burgers','Burgers'],['sides','Sides'],['drinks','Drinks']];
+const AREAS=[['sandton','Sandton',35],['rosebank','Rosebank',25],['melville','Melville',40]];
+const BANKS=['FNB','Standard Bank','Absa','Nedbank','Capitec'];
+const NEXT={new:'prepping',prepping:'ready',ready:'out',out:'done'};
+const SLABEL={new:'NEW',prepping:'PREPARING',ready:'READY',out:'OUT FOR DELIVERY',done:'COMPLETED'};
+const TRACK_DELIVERY=[['new','Placed'],['prepping','Preparing'],['ready','Ready'],['out','On the way'],['done','Delivered']];
+const TRACK_PICKUP=[['new','Placed'],['prepping','Preparing'],['ready','Ready'],['done','Collected']];
+
+/* ================= UTILS ================= */
+const $=id=>document.getElementById(id);
+const r=n=>'R'+n.toLocaleString('en-ZA');
+const t2=ts=>new Date(ts).toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'});
+const mins=ms=>Math.max(0,Math.floor(ms/60000));
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const allItems=()=>MENU.flatMap(g=>g.items);
+const findItem=id=>allItems().find(i=>i.id===id);
+
+/* ================= STATE ================= */
+function newDraft(){
+  return {step:'menu', cat:'all', cart:{}, type:'delivery', area:'sandton', name:'', phone:'', notes:'',
+          pay:'card', cardN:'', cardExp:'', cardCV:'', bank:BANKS[0], eftStep:0, processing:false, err:''};
+}
+const S={orders:[], seq:1042, sound:true, lastNo:null, draft:newDraft()};
+
+/* ================= STORAGE + SYNC ================= */
+const KEY='rr_orders_v1', SEQ='rr_seq_v1';
+function loadOrders(){
+  try{ S.orders=JSON.parse(localStorage.getItem(KEY))||[]; }catch(e){ S.orders=[]; }
+  S.seq=parseInt(localStorage.getItem(SEQ)||'1042',10);
+}
+function saveOrders(){
+  localStorage.setItem(KEY, JSON.stringify(S.orders));
+  localStorage.setItem(SEQ, String(S.seq));
+  if(bc) bc.postMessage({type:'orders'});
+}
+const bc=('BroadcastChannel' in window)?new BroadcastChannel('rr_sync_v1'):null;
+if(bc) bc.onmessage=e=>{
+  if(e.data&&e.data.type==='orders'){
+    const known=new Set(S.orders.map(o=>o.no));
+    loadOrders(); renderAll();
+    const fresh=S.orders.filter(o=>!known.has(o.no));
+    fresh.forEach(o=>{ toast(waText(o,'new'), o.phone); beep(); });
+  }
+};
+window.addEventListener('storage',e=>{ if(e.key===KEY){ loadOrders(); renderAll(); } });
+
+function uiEvent(o,status){
+  renderAll();
+  toast(waText(o,status), o.phone);
+  if(status==='new') beep();
+}
+
+/* ================= WHATSAPP AUTOMATION ================= */
+function payLabel(o){
+  return o.pay.method==='card' ? 'paid by Card' : o.pay.method==='eft' ? 'paid via Instant EFT' : 'cash on delivery';
+}
+function waText(o,s){
+  const items=o.items.map(x=>x.q+' × '+x.n+' ('+r(x.p*x.q)+')').join('\n');
+  if(s==='new') return '✅ Order '+o.no+' confirmed!\n'+items+'\nTotal: '+r(o.total)+' · '+payLabel(o)+'\nWe’ll update you automatically as it’s made.\n— RichieRich';
+  if(s==='prepping') return '👨‍🍳 Your order '+o.no+' is being prepared. Estimated 15–20 min.';
+  if(s==='ready') return o.type==='delivery' ? '✅ Order '+o.no+' is ready and heading to the courier.' : '✅ Order '+o.no+' is ready for pickup! See you soon.';
+  if(s==='out') return '🛵 Your order '+o.no+' is out for delivery. ETA ~15 min.';
+  if(s==='done') return '⭐ Thanks for ordering from RichieRich, '+esc(o.name.split(' ')[0])+'! How was your experience? (1–5)';
+  return '';
+}
+
+/* ================= PORTAL ================= */
+function cartEntries(){
+  return Object.entries(S.draft.cart).map(([id,q])=>({item:findItem(id),q})).filter(x=>x.item&&x.q>0);
+}
+function cartTotal(){ return cartEntries().reduce((a,x)=>a+x.item.p*x.q,0); }
+function cartFee(){ return S.draft.type==='delivery' ? (AREAS.find(a=>a[0]===S.draft.area)||[0,0,0])[2] : 0; }
+function cartCount(){ return cartEntries().reduce((a,x)=>a+x.q,0); }
+
+function renderPortal(){
+  const d=S.draft;
+  if(d.step==='menu') return renderMenu();
+  if(d.step==='cart') return renderCart();
+  if(d.step==='pay')  return renderPay();
+  return renderDone();
+}
+
+function renderMenu(){
+  const d=S.draft;
+  const items=MENU.filter(g=>d.cat==='all'||g.c===d.cat).flatMap(g=>g.items);
+  $('portal').innerHTML = `
+    <div class="scroll">
+      <div class="shead">
+        <div class="sbrand">
+          <div class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M7 3v7a2 2 0 0 1-2 2H4M7 3v18M4 3v5M17 3c-2 0-3 2-3 5s1 4 3 4v9"/></svg></div>
+          <b>RichieRich</b>
+          <span class="open">Open now · until 22:00</span>
+        </div>
+        <div class="sarea">Delivers to <b>Sandton · Rosebank · Melville</b> — or pick up in store</div>
+      </div>
+      <div class="cats">
+        ${CATS.map(c=>`<button class="cat ${d.cat===c[0]?'on':''}" data-cat="${c[0]}">${c[1]}</button>`).join('')}
+      </div>
+      <div class="mlist">
+        ${items.map(it=>{
+          const q=d.cart[it.id]||0;
+          return `<div class="mi">
+            <div class="mitile" style="background:${MENU.find(g=>g.items.includes(it)).g}">${it.e}</div>
+            <div class="minfo">
+              <b>${it.n}</b>
+              <span class="desc">${it.d}</span>
+              <div class="mifoot">
+                <span class="price">${r(it.p)}</span>
+                ${q===0
+                  ? `<button class="addb" data-add="${it.id}">+ Add</button>`
+                  : `<div class="step"><button data-dec="${it.id}">−</button><b>${q}</b><button data-add="${it.id}">+</button></div>`}
+              </div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    ${cartCount()>0?`
+    <div class="cartbar">
+      <div><b>${cartCount()} item${cartCount()>1?'s':''} · ${r(cartTotal())}</b><span>${S.draft.type==='delivery'?'Delivery · fee added at checkout':'Pickup in store'}</span></div>
+      <button data-goto="cart">View cart →</button>
+    </div>`:''}`;
+}
+
+function renderCart(){
+  const d=S.draft;
+  const sub=cartTotal(), fee=cartFee();
+  $('portal').innerHTML=`
+    <div class="vhead"><button class="backb" data-goto="menu">←</button><b>Your order</b></div>
+    <div class="scroll vbody">
+      <div class="block">
+        <h4>Items</h4>
+        ${cartEntries().map(x=>`
+          <div class="citem">
+            <div class="ce">${x.item.e}</div>
+            <div class="cn">${x.item.n}<span>${r(x.item.p)} each</span></div>
+            <div class="step"><button data-dec="${x.item.id}">−</button><b>${x.q}</b><button data-add="${x.item.id}">+</button></div>
+          </div>`).join('')}
+      </div>
+      <div class="block">
+        <h4>Delivery or pickup</h4>
+        <div class="seg">
+          <button class="${d.type==='delivery'?'on':''}" data-type="delivery">Delivery<small>~30 min</small></button>
+          <button class="${d.type==='pickup'?'on':''}" data-type="pickup">Pickup<small>~12 min</small></button>
+        </div>
+        ${d.type==='delivery'?`
+        <div class="fld" style="margin-top:12px;">
+          <span>Delivery area (fee shown below)</span>
+          <select data-field="area">${AREAS.map(a=>`<option value="${a[0]}" ${d.area===a[0]?'selected':''}>${a[1]} — ${r(a[2])}</option>`).join('')}</select>
+        </div>`:''}
+      </div>
+      <div class="block">
+        <h4>Your details</h4>
+        <label class="fld"><span>Full name</span><input id="fName" placeholder="e.g. Thabo Mokoena" value="${esc(d.name)}" autocomplete="off"></label>
+        <label class="fld"><span>Phone (WhatsApp confirmations go here)</span><input id="fPhone" placeholder="082 555 0134" value="${esc(d.phone)}" inputmode="tel" autocomplete="off" maxlength="10"></label>
+        <label class="fld"><span>Order notes (optional)</span><input id="fNotes" placeholder="e.g. No pickles, ring the bell" value="${esc(d.notes)}" autocomplete="off"></label>
+      </div>
+      <div class="block">
+        <h4>Summary</h4>
+        <div class="totrow"><span>Subtotal (${cartCount()} items)</span><span>${r(sub)}</span></div>
+        <div class="totrow"><span>Delivery fee</span><span>${fee?r(fee):'Free'}</span></div>
+        <div class="totrow grand"><span>Total</span><span>${r(sub+fee)}</span></div>
+      </div>
+      <button class="btn" data-continue>Continue to payment · ${r(sub+fee)}</button>
+      <div class="err" id="cartErr"></div>
+    </div>`;
+  const bind=t=>{ const el=$(t); if(el) el.oninput=()=>{ d[t==='fName'?'name':t==='fPhone'?'phone':'notes']=el.value; if(t==='fPhone') d.phone=d.phone.replace(/\D/g,'').slice(0,10); }; };
+  bind('fName'); bind('fPhone'); bind('fNotes');
+}
+
+function renderPay(){
+  const d=S.draft;
+  const total=cartTotal()+cartFee();
+  $('portal').innerHTML=`
+    <div class="vhead"><button class="backb" data-goto="cart">←</button><b>Payment</b></div>
+    <div class="scroll vbody">
+      <div class="block">
+        <h4>Order ${S.lastNo||''} — summary</h4>
+        <div class="totrow"><span>${cartCount()} item${cartCount()>1?'s':''} · ${d.type==='delivery'?'Delivery to '+(AREAS.find(a=>a[0]===d.area)||['','','?'])[1]:'Pickup in store'}</span></div>
+        <div class="totrow grand"><span>Total due</span><span>${r(total)}</span></div>
+      </div>
+      <div class="block">
+        <h4>Pay with</h4>
+        <div class="pmtabs">
+          <button class="${d.pay==='card'?'on':''}" data-pay="card">💳 Card<small>Visa · Mastercard</small></button>
+          <button class="${d.pay==='eft'?'on':''}" data-pay="eft">⚡ Instant EFT<small>Any SA bank</small></button>
+          <button class="${d.pay==='cash'?'on':''}" data-pay="cash">💵 Cash<small>Pay on delivery</small></button>
+        </div>
+        <div style="margin-top:14px;">
+        ${d.pay==='card'?`
+          <label class="fld"><span>Card number</span><input id="cNum" placeholder="4242 4242 4242 4242" value="${esc(d.cardN)}" inputmode="numeric" maxlength="19"></label>
+          <div class="payrow">
+            <label class="fld"><span>Expiry</span><input id="cExp" placeholder="MM/YY" value="${esc(d.cardExp)}" inputmode="numeric" maxlength="5"></label>
+            <label class="fld"><span>CVV</span><input id="cCvv" placeholder="123" value="${esc(d.cardCV)}" inputmode="numeric" maxlength="3"></label>
+          </div>
+          <button class="testlink" data-testcard>Use test card</button>`
+        : d.pay==='eft'?`
+          <label class="fld"><span>Bank</span><select id="bankSel">${BANKS.map(b=>`<option ${d.bank===b?'selected':''}>${b}</option>`).join('')}</select></label>
+          ${d.eftStep>0
+            ? `<div class="eftsteps"><i class="${d.eftStep>=1?'on':''}"></i><i class="${d.eftStep>=2?'on':''}"></i><i class="${d.eftStep>=3?'on':''}"></i><span>${['Requesting approval…','Contacting '+esc(d.bank)+'…','Approved ✓'][Math.min(d.eftStep,3)-1]||''}</span></div>`
+            : `<div class="cashnote" style="background:var(--blue-bg); border-color:#bfdbfe;">You’ll be redirected to your bank’s app for one-tap approval. We confirm payment before your order reaches the kitchen.</div>`}`
+        : `
+          <div class="cashnote">💵 No payment needed now — pay the courier or in store when your order arrives. Your order is still confirmed and tracked automatically.</div>`}
+        </div>
+      </div>
+      <button class="btn" id="payBtn" data-paynow ${d.processing?'disabled':''}>
+        ${d.processing ? 'Processing…' : d.pay==='cash' ? 'Place order · pay '+r(total)+' on '+(d.type==='delivery'?'delivery':'pickup') : 'Pay '+r(total)+' securely'}
+      </button>
+      <div class="demo-note">Demo payment — no real card is charged, no real bank is called.</div>
+      <div class="err" id="payErr"></div>
+    </div>`;
+  const num=$('cNum');
+  if(num) num.oninput=()=>{ const v=num.value.replace(/\D/g,'').slice(0,16); d.cardN=v.replace(/(.{4})/g,'$1 ').trim(); num.value=d.cardN; };
+  const exp=$('cExp');
+  if(exp) exp.oninput=()=>{ let v=exp.value.replace(/\D/g,'').slice(0,4); if(v.length>2) v=v.slice(0,2)+'/'+v.slice(2); d.cardExp=v; exp.value=v; };
+  const cvv=$('cCvv');
+  if(cvv) cvv.oninput=()=>{ d.cardCV=cvv.value.replace(/\D/g,'').slice(0,3); cvv.value=d.cardCV; };
+  const bs=$('bankSel');
+  if(bs) bs.onchange=()=>{ d.bank=bs.value; };
+}
+
+function receiptHTML(o){
+  return `<div class="receipt">
+    <div class="rz-c rz-title">RICHIERICH</div>
+    <div class="rz-c" style="font-size:10px;">Sandton · Rosebank · Melville</div>
+    <div class="rz-c" style="font-size:10px;">${t2(o.created)} · ${o.type==='delivery'?'DELIVERY':'PICKUP'}</div>
+    <hr>
+    ${o.items.map(x=>`<div class="rz-row"><span>${x.q} × ${x.n}</span><span>${r(x.p*x.q)}</span></div>`).join('')}
+    <hr>
+    <div class="rz-row"><span>Subtotal</span><span>${r(o.subtotal)}</span></div>
+    <div class="rz-row"><span>Delivery fee</span><span>${o.fee?r(o.fee):'Free'}</span></div>
+    <div class="rz-row" style="font-weight:800; font-size:13px;"><span>TOTAL</span><span>${r(o.total)}</span></div>
+    <hr>
+    <div class="rz-row rz-paid"><span>${o.pay.method==='cash'?'CASH ON DELIVERY':o.pay.method.toUpperCase()+' · '+o.pay.ref}</span><span>${o.pay.method==='cash'?'—':t2(o.created)}</span></div>
+    <div class="rz-row"><span>Customer</span><span>${esc(o.name)} · ${esc(o.phone)}</span></div>
+    ${o.type==='delivery'?`<div class="rz-row"><span>Area</span><span>${(AREAS.find(a=>a[0]===o.area)||['','',''])[1]}</span></div>`:''}
+    <hr>
+    <div class="rz-c" style="font-size:10px;">Order #${o.no}</div>
+    <div class="rz-foot">Thank you — see you soon!</div>
+  </div>`;
+}
+
+function trackerHTML(o){
+  const steps=o.type==='delivery'?TRACK_DELIVERY:TRACK_PICKUP;
+  const idx=steps.findIndex(s=>s[0]===o.status);
+  return `<div class="track">
+    ${steps.map((s,i)=>`<div class="tstep ${i<idx?'done':''} ${i===idx?'cur':''}"><i>${i<idx?'✓':i+1}</i>${s[1]}</div>`).join('')}
+  </div>
+  <div class="trackhint">This tracker updates live as the kitchen works — you’ll also get every update on WhatsApp.</div>`;
+}
+
+function renderDone(){
+  const o=S.orders.find(x=>x.no===S.lastNo);
+  if(!o){ S.draft=newDraft(); return renderMenu(); }
+  const wa=waText(o,'new');
+  $('portal').innerHTML=`
+    <div class="scroll okwrap">
+      <div class="oktop">
+        <div class="okr">✓</div>
+        <b>Payment confirmed</b>
+        <span>Order <b>#${o.no}</b> · ${r(o.total)} · ${payLabel(o)}</span>
+      </div>
+      <div class="wa-prev">
+        <div class="watag">WhatsApp · sent automatically</div>
+        <div class="wabub">${wa}<span class="ts">${t2(o.created)} ✓✓</span></div>
+      </div>
+      <div id="trackBox">${trackerHTML(o)}</div>
+      <div id="receiptBox">${receiptHTML(o)}</div>
+      <div style="display:flex; gap:9px;">
+        <button class="btn ghost" data-print>Save / Print receipt</button>
+        <button class="btn" data-neworder>New order</button>
+      </div>
+    </div>`;
+}
+
+/* ================= PAYMENT ================= */
+function payNow(){
+  const d=S.draft;
+  const err=$('payErr');
+  if(d.processing) return;
+  if(d.pay==='card'){
+    const digits=d.cardN.replace(/\D/g,'');
+    if(digits.length<16){ err.textContent='Enter a valid 16-digit card number.'; return; }
+    const m=d.cardExp.match(/^(\d{2})\/(\d{2})$/);
+    if(!m || +m[1]<1 || +m[1]>12){ err.textContent='Expiry must be MM/YY.'; return; }
+    const expDate=new Date(2000+ +m[2], +m[1], 0);
+    if(expDate < new Date()){ err.textContent='This card has expired.'; return; }
+    if(d.cardCV.length<3){ err.textContent='Enter the 3-digit CVV.'; return; }
+  }
+  err.textContent='';
+  d.processing=true; renderPay();
+  const total=cartTotal()+cartFee();
+  const method=d.pay;
+  const ref=method==='card' ? 'CARD-'+Math.random().toString(36).slice(2,8).toUpperCase()
+            : method==='eft' ? 'EFT-'+Math.random().toString(36).slice(2,8).toUpperCase()
+            : 'CASH';
+  const delay=method==='card'?1800 : method==='eft'?2600 : 700;
+  if(method==='eft'){
+    d.eftStep=1; renderPay();
+    setTimeout(()=>{ d.eftStep=2; renderPay(); }, 900);
+    setTimeout(()=>{ d.eftStep=3; renderPay(); }, 1800);
+  }
+  setTimeout(()=>{
+    d.processing=false;
+    createOrder({method, ref, total});
+  }, delay);
+}
+
+function createOrder(pay){
+  const d=S.draft;
+  const items=cartEntries().map(x=>({n:x.item.n, p:x.item.p, q:x.q, e:x.item.e}));
+  const subtotal=cartTotal(), fee=cartFee();
+  const o={
+    no:'RR-'+(S.seq++),
+    created:Date.now(),
+    type:d.type, area:d.area, name:d.name, phone:d.phone, notes:d.notes,
+    items, subtotal, fee, total:subtotal+fee,
+    pay:{method:pay.method, ref:pay.ref},
+    status:'new',
+    timeline:[{s:'new', t:Date.now()}]
+  };
+  S.orders.unshift(o);
+  S.lastNo=o.no;
+  const nd=newDraft(); nd.step='done'; S.draft=nd;
+  saveOrders();
+  uiEvent(o,'new');
+}
+
+/* ================= KITCHEN ================= */
+function nextStatus(o){ return o.status==='ready' ? (o.type==='delivery'?'out':'done') : NEXT[o.status]; }
+function actionLabel(o){
+  const n=nextStatus(o);
+  return n==='prepping' ? 'Start prepping' : n==='ready' ? 'Mark ready' : n==='out' ? 'Out for delivery' : 'Complete order';
+}
+function advance(id){
+  const o=S.orders.find(x=>x.no===id);
+  if(!o || o.status==='done') return;
+  o.status=nextStatus(o);
+  o.timeline.push({s:o.status, t:Date.now()});
+  saveOrders();
+  uiEvent(o, o.status);
+}
+
+function renderKitchen(){
+  const now=Date.now();
+  const done=S.orders.filter(o=>o.status==='done');
+  const active=S.orders.filter(o=>o.status!=='done');
+  const revenue=S.orders.reduce((a,o)=>a+o.total,0);
+  const doneTimes=done.map(o=>(o.timeline.find(t=>t.s==='done')||{t:o.created}).t - o.created);
+  const avg=doneTimes.length ? Math.round(doneTimes.reduce((a,b)=>a+b,0)/doneTimes.length/60000) : null;
+
+  const koCard=o=>{
+    const n=nextStatus(o);
+    return `<div class="ko ${o.status}">
+      <div class="ko-top"><b>#${o.no}</b><span class="ko-time">${t2(o.created)} · ${o.type==='delivery'?'Delivery':'Pickup'}</span><span class="ko-badge ${o.status}">${SLABEL[o.status]}</span></div>
+      <ul>${o.items.map(x=>`<li><b>${x.q}×</b> ${x.n}</li>`).join('')}</ul>
+      <div class="ko-meta">
+        <span class="payb ${o.pay.method==='cash'?'cash':'paid'}">${o.pay.method==='cash'?'CASH ON DELIVERY':'PAID · '+o.pay.method.toUpperCase()}</span>
+        <b style="color:var(--ink);">${r(o.total)}</b>
+        <span>·</span><span>${esc(o.name)}</span>
+        <span class="wa-mini">WhatsApp ${esc(o.phone)}</span>
+        ${o.type==='delivery'?`<span>· ${((AREAS.find(a=>a[0]===o.area)||['','',''])[1])}</span>`:''}
+      </div>
+      ${o.notes?`<div class="ko-meta" style="color:var(--amber);">Note: ${esc(o.notes)}</div>`:''}
+      <div class="ko-foot">
+        <span class="age" data-age="${o.created}">${mins(now-o.created)} min ago</span>
+        ${o.status==='done' ? '<span class="ko-check">✓ Completed</span>' : `<button class="kobtn ${n==='prepping'?'next':''}" data-adv="${o.no}">${actionLabel(o)}</button>`}
+      </div>
+    </div>`;
+  };
+
+  const log=S.orders.flatMap(o=>o.timeline.map(t=>({ts:t.t, o, s:t.s}))).sort((a,b)=>b.ts-a.ts).slice(0,30);
+
+  $('kitchen').innerHTML=`
+    <div class="khead">
+      <b>Kitchen dashboard</b><span class="ksub">RichieRich — orders appear here the moment payment lands</span>
+      <div class="kspace">
+        <button class="kicon" id="soundBtn" title="New-order sound">${S.sound?'🔔':'🔕'}</button>
+        <button class="kicon warn" id="resetBtn" title="Reset shift">↺</button>
+        <div class="kclock" id="kClock">${new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><span>Orders today</span><b>${S.orders.length}</b></div>
+      <div class="stat"><span>Revenue today</span><b>${r(revenue)}</b></div>
+      <div class="stat"><span>In progress</span><b>${active.length}</b></div>
+      <div class="stat"><span>Avg. fulfilment</span><b>${avg!==null?avg+' <small>min</small>':'—'}</b></div>
+    </div>
+    <div class="kcols">
+      <div class="kcol">
+        <h3>Live queue <span class="cnt">${active.length}</span></h3>
+        ${active.length ? active.map(koCard).join('') : '<div class="kempty"><b>No active orders</b>New orders appear here automatically the second a customer pays — no typing, no calling.</div>'}
+        ${done.length?`
+        <div class="kdone">
+          <h3 style="margin-top:14px;">Completed <span class="cnt">${done.length}</span></h3>
+          ${done.slice(0,4).map(koCard).join('')}
+        </div>`:''}
+      </div>
+      <div class="kcol">
+        <h3>WhatsApp automation</h3>
+        <div class="walog">
+          <div class="wl-head"><div class="wl-ic">💬</div><div><b>Auto-sent messages</b><span>Every status change notifies the customer — zero manual typing</span></div></div>
+          ${log.length ? log.map(l=>`
+            <div class="wl-msg">
+              <div class="wl-to">→ ${esc(l.o.phone)} · #${l.o.no}</div>
+              <div class="wl-t">${waText(l.o,l.s)}</div>
+              <div class="wl-ts">${t2(l.ts)} ✓✓</div>
+            </div>`).join('')
+          : '<div class="wl-empty">Messages sent to customers will appear here automatically.</div>'}
+        </div>
+      </div>
+    </div>`;
+  const sb=$('soundBtn'); if(sb) sb.onclick=()=>{ S.sound=!S.sound; renderKitchen(); };
+  const rb=$('resetBtn');
+  if(rb) rb.onclick=()=>{
+    if(confirm('Reset the shift? This clears all orders from the kitchen dashboard.')){
+      S.orders=[]; saveOrders(); renderAll();
+    }
+  };
+}
+
+/* ================= TOASTS + SOUND ================= */
+function toast(text, phone){
+  const el=document.createElement('div');
+  el.className='toast';
+  el.innerHTML=`<div class="t-ic">💬</div><div class="t-b"><b>WhatsApp → ${esc(phone||'customer')}</b><span>${esc(text).split('\n')[0]}${text.includes('\n')?'…':''}</span></div><div class="t-ck">✓✓</div>`;
+  $('toasts').appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .4s'; setTimeout(()=>el.remove(),420); }, 4200);
+}
+let audioCtx=null;
+function beep(){
+  if(!S.sound) return;
+  try{
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended') audioCtx.resume();
+    const t0=audioCtx.currentTime;
+    [[880,0],[1318,0.14]].forEach(([f,off])=>{
+      const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+      o.frequency.value=f; o.type='sine';
+      g.gain.setValueAtTime(0.0001,t0+off);
+      g.gain.exponentialRampToValueAtTime(0.18,t0+off+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001,t0+off+0.12);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t0+off); o.stop(t0+off+0.14);
+    });
+  }catch(e){ /* silent */ }
+}
+
+/* ================= PRINT ================= */
+function printReceipt(){
+  const o=S.orders.find(x=>x.no===S.lastNo);
+  if(!o) return;
+  $('printArea').innerHTML=receiptHTML(o);
+  window.print();
+}
+
+/* ================= RENDER + EVENTS ================= */
+function renderAll(){ renderPortal(); renderKitchen(); }
+
+function bindPortal(){
+  const p=$('portal');
+  p.onclick=e=>{
+    const t=e.target.closest('[data-add],[data-dec],[data-cat],[data-goto],[data-type],[data-pay],[data-paynow],[data-testcard],[data-neworder],[data-print],[data-continue]');
+    if(!t) return;
+    const d=S.draft;
+    if(t.dataset.add!==undefined){ d.cart[t.dataset.add]=(d.cart[t.dataset.add]||0)+1; renderPortal(); }
+    else if(t.dataset.dec!==undefined){ const id=t.dataset.dec; d.cart[id]=(d.cart[id]||0)-1; if(d.cart[id]<=0) delete d.cart[id]; if(!cartCount()) d.step='menu'; renderPortal(); }
+    else if(t.dataset.cat!==undefined){ d.cat=t.dataset.cat; renderPortal(); }
+    else if(t.dataset.goto){ d.step=t.dataset.goto; d.err=''; renderPortal(); }
+    else if(t.dataset.type){ d.type=t.dataset.type; renderPortal(); }
+    else if(t.dataset.pay){ d.pay=t.dataset.pay; d.eftStep=0; renderPortal(); }
+    else if(t.dataset.testcard!==undefined){ d.cardN='4242 4242 4242 4242'; d.cardExp='12/27'; d.cardCV='123'; renderPortal(); }
+    else if(t.dataset.neworder!==undefined){ S.draft=newDraft(); S.lastNo=null; renderPortal(); }
+    else if(t.dataset.print!==undefined){ printReceipt(); }
+    else if(t.dataset.continue!==undefined){
+      if(!d.name.trim()){ $('cartErr').textContent='Enter your name so we know who to send the receipt to.'; return; }
+      if(!/^0\d{9}$/.test(d.phone)){ $('cartErr').textContent='Enter a valid SA phone number (10 digits, starts with 0) — it’s where your WhatsApp confirmations go.'; return; }
+      d.step='pay'; d.err=''; renderPortal();
+    }
+    else if(t.dataset.paynow!==undefined){ payNow(); }
+  };
+}
+
+function bindKitchen(){
+  const k=$('kitchen');
+  k.onclick=e=>{
+    const t=e.target.closest('[data-adv]');
+    if(t) advance(t.dataset.adv);
+  };
+}
+
+/* 1s tick: clocks + ages + live tracker (no full re-render, keeps typing safe) */
+setInterval(()=>{
+  const now=Date.now();
+  const ck=$('kClock'); if(ck) ck.textContent=new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.querySelectorAll('[data-age]').forEach(el=>{ el.textContent=mins(now-parseInt(el.dataset.age,10))+' min ago'; });
+  const tb=$('trackBox');
+  if(tb && S.lastNo){
+    const o=S.orders.find(x=>x.no===S.lastNo);
+    if(o) tb.innerHTML=trackerHTML(o);
+  }
+},1000);
+
+/* view switch */
+document.querySelectorAll('#viewSwitch button').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('#viewSwitch button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    document.body.classList.remove('v-portal','v-kitchen');
+    document.body.classList.add(b.dataset.v);
+  };
+});
+
+/* init */
+loadOrders();
+renderAll();
+bindPortal();
+bindKitchen();
+</script>
+</body>
+</html>

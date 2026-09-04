@@ -1,0 +1,207 @@
+@import "tailwindcss";
+
+@theme {
+  /* The prototype uses a calm, operations-first surface with green actions. */
+  --color-coal: #f6f5f1;
+  --color-coal2: #fbfaf7;
+  --color-board: #ffffff;
+  --color-board2: #f3f4f6;
+  --color-gold: #059669;
+  --color-golddeep: #047857;
+  --color-cream: #14161a;
+  --color-dim: #5c6066;
+  --color-chili: #dc2626;
+  --color-leaf: #059669;
+
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-kenburns: kenburns 16s ease-in-out infinite alternate;
+  --animate-pop: pop 0.35s cubic-bezier(0.2, 1.6, 0.4, 1);
+  --animate-pulsedot: pulsedot 1.8s ease-in-out infinite;
+  --animate-flicker: flicker 2.4s ease-in-out infinite;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes kenburns {
+  from {
+    transform: scale(1.02) translate(0, 0);
+  }
+  to {
+    transform: scale(1.14) translate(2%, -2%);
+  }
+}
+@keyframes pop {
+  0% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes pulsedot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 9px rgba(5, 150, 105, 0);
+  }
+}
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 0.55;
+  }
+  60% {
+    opacity: 0.9;
+  }
+}
+@keyframes lineup {
+  to {
+    transform: translateY(0);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@utility font-display {
+  font-family: var(--font-anton), "Arial Narrow", sans-serif;
+  letter-spacing: 0.02em;
+}
+
+@utility font-body {
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--color-coal);
+  color: var(--color-cream);
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-coal);
+}
+
+/* grain overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 80;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-coal);
+}
+::-webkit-scrollbar-thumb {
+  background: #2c4437;
+  border-radius: 8px;
+  border: 2px solid var(--color-coal);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-golddeep);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+/* scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* line-mask headline reveal */
+.mask-line {
+  display: block;
+  overflow: hidden;
+}
+.mask-line > span {
+  display: block;
+  transform: translateY(112%);
+  animation: lineup 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+/* menu-board frame */
+.board {
+  @apply rounded-2xl border border-gold/25 bg-board;
+  box-shadow:
+    0 10px 30px -18px rgba(20, 22, 26, 0.35);
+}
+
+.sticker {
+  display: inline-block;
+  background-color: var(--color-gold);
+  color: var(--color-coal);
+  font-family: var(--font-anton), "Arial Narrow", sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.7rem;
+  box-shadow: 2px 2px 0 rgba(20, 22, 26, 0.12);
+}
+
+.press {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+.press:active {
+  transform: scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .mask-line > span {
+    transform: none !important;
+  }
+}
