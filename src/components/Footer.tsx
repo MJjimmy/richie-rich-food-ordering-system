@@ -6,7 +6,6 @@ const packagePoints = [
   "Custom digital menu & mobile web ordering portal",
   "Payment gateway setup — Card / Instant EFT / Cash",
   "Automated WhatsApp confirmation + receipt on payment",
-  "Kitchen order dashboard for the pass (tablet ready)",
 ];
 
 export function Footer() {
@@ -59,9 +58,6 @@ export function Footer() {
             </Link>
             <Link href="/track" className="press rounded-full bg-board2 px-3 py-1.5 text-cream/80 hover:text-gold">
               Track an order
-            </Link>
-            <Link href="/kitchen" className="press rounded-full bg-board2 px-3 py-1.5 text-cream/80 hover:text-gold">
-              Kitchen dashboard
             </Link>
           </div>
         </div>

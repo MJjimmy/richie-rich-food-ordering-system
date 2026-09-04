@@ -8,7 +8,6 @@ import { IconCart, IconCrown } from "./icons";
 const links = [
   { href: "/menu", label: "Menu" },
   { href: "/track", label: "Track order" },
-  { href: "/kitchen", label: "Kitchen" },
 ];
 
 export function Header() {
