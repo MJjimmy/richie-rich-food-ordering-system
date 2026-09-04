@@ -72,7 +72,7 @@ export default async function Home() {
     .slice(0, 8)
     .map((i) => ({
       item: i,
-      image: catMap.get(i.categoryId)?.image ?? "/images/kota-private.jpg",
+      image: catMap.get(i.categoryId)?.image ?? "/images/burger.jpeg",
       category: catMap.get(i.categoryId)?.name ?? "Richie Rich",
     }));
 
@@ -148,7 +148,7 @@ export default async function Home() {
               <div className="overflow-hidden rounded-xl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/images/kota-private.jpg"
+                  src="/images/burger.jpeg"
                   alt="Loaded private school kota with chips, cheese and special garlic"
                   className="animate-kenburns h-[380px] w-full object-cover sm:h-[460px]"
                 />
