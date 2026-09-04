@@ -171,7 +171,7 @@ export function MenuClient({ categories }: { categories: CategoryT[] }) {
             the kitchen loves a challenge.
           </p>
           <a
-            href="https://wa.me/27715900037?text=Hi%20Richie%20Rich!%20I%20want%20something%20off%20the%20menu."
+            href="https://wa.me/27655582788?text=Hi%20Richie%20Rich!%20I%20want%20something%20off%20the%20menu."
             target="_blank"
             rel="noreferrer"
             className="press rounded-full bg-leaf/20 px-6 py-3 font-display tracking-wider text-leaf uppercase hover:bg-leaf/30"

@@ -47,7 +47,7 @@ export function Footer() {
             </li>
             <li className="flex items-start gap-3">
               <IconPhone className="mt-0.5 h-4 w-4 text-gold" />
-              <a href="tel:+27715900037" className="hover:text-gold">
+              <a href="tel:+27655582788" className="hover:text-gold">
                 {RESTAURANT.phoneDisplay}
               </a>
             </li>

@@ -6,8 +6,8 @@ export const RESTAURANT = {
   tagline: "Kota & Shisa Kitchen",
   address: "167 Thabo Sehume Street, Pretoria CBD",
   hours: "Mon – Sun · 08:00 – 22:00",
-  phoneDisplay: "+27 71 590 0037",
-  whatsapp: "27715900037",
+  phoneDisplay: "0655582788",
+  whatsapp: "27655582788",
 };
 
 export const DELIVERY_FEE_CENTS = 2500;
