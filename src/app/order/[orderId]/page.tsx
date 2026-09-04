@@ -264,13 +264,20 @@ export default function OrderPage() {
               href={waLink(receiptText(order))}
               target="_blank"
               rel="noreferrer"
-              className="press mt-4 flex items-center justify-center gap-2 rounded-full bg-leaf/20 py-3 font-display tracking-wider text-leaf uppercase hover:bg-leaf/30"
+              className="press print-hide mt-4 flex items-center justify-center gap-2 rounded-full bg-leaf/20 py-3 font-display tracking-wider text-leaf uppercase hover:bg-leaf/30"
             >
               <IconWhatsApp className="h-5 w-5" /> WhatsApp my receipt
             </a>
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="press print-hide mt-3 flex w-full items-center justify-center gap-2 rounded-full border-2 border-gold/30 py-3 font-display tracking-wider text-cream uppercase hover:border-gold hover:text-gold"
+            >
+              Print / Save PDF
+            </button>
             <Link
               href="/menu"
-              className="press mt-3 flex items-center justify-center gap-2 rounded-full border-2 border-gold/30 py-3 font-display tracking-wider text-cream uppercase hover:border-gold hover:text-gold"
+              className="press print-hide mt-3 flex items-center justify-center gap-2 rounded-full border-2 border-gold/30 py-3 font-display tracking-wider text-cream uppercase hover:border-gold hover:text-gold"
             >
               Order something else <IconArrow className="h-4 w-4" />
             </Link>

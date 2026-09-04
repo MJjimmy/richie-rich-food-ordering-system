@@ -205,3 +205,9 @@ body::after {
     transform: none !important;
   }
 }
+
+@media print {
+  .print-hide {
+    display: none !important;
+  }
+}
