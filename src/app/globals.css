@@ -207,7 +207,116 @@ body::after {
 }
 
 @media print {
+  @page {
+    margin: 0.35in;
+  }
+
+  body {
+    background: white !important;
+    color: #14161a !important;
+  }
+
+  body::after,
+  .screen-order,
+  header,
+  footer {
+    display: none !important;
+  }
+
+  .print-receipt {
+    display: block !important;
+    width: 3.4in;
+    margin: 0 auto;
+    padding: 0.22in;
+    border: 1px solid #d8d8d2;
+    border-radius: 14px;
+    background: white;
+    color: #14161a;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .print-receipt-header {
+    display: block !important;
+    text-align: center;
+  }
+
+  .print-receipt-header h1 {
+    margin: 0 0 5px;
+    font-size: 20px;
+    letter-spacing: 0.16em;
+  }
+
+  .print-receipt-header p,
+  .print-receipt-order,
+  .print-receipt-thanks {
+    margin: 2px 0;
+  }
+
+  .print-receipt-rule {
+    margin: 14px 0;
+    border-top: 1px dashed #a9aaa4;
+  }
+
+  .print-receipt-items,
+  .print-receipt-totals {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .print-receipt-items li,
+  .print-receipt-totals div,
+  .print-receipt-payment,
+  .print-receipt-customer {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 6px 0;
+  }
+
+  .print-receipt-items span,
+  .print-receipt-customer span {
+    min-width: 0;
+  }
+
+  .print-receipt-items strong,
+  .print-receipt-totals dd,
+  .print-receipt-payment span {
+    white-space: nowrap;
+  }
+
+  .print-receipt-totals dt,
+  .print-receipt-totals dd {
+    margin: 0;
+  }
+
+  .print-receipt-total {
+    margin-top: 9px !important;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .print-receipt-customer {
+    margin: 7px 0;
+  }
+
+  .print-receipt-order,
+  .print-receipt-thanks {
+    text-align: center;
+  }
+
+  .print-receipt-thanks {
+    margin-top: 14px;
+    color: #5c6066;
+  }
+
   .print-hide {
     display: none !important;
   }
+}
+
+.print-receipt {
+  display: none;
 }

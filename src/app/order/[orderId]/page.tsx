@@ -72,7 +72,8 @@ export default function OrderPage() {
   const isNew = search.get("new") === "1";
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
+    <>
+      <div className="screen-order mx-auto max-w-4xl px-4 py-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-bold tracking-[0.28em] text-gold uppercase">
@@ -284,8 +285,57 @@ export default function OrderPage() {
           </div>
         </aside>
       </div>
-    </div>
+      </div>
+      <PrintableReceipt order={order} />
+    </>
   );
+}
+
+function PrintableReceipt({ order }: { order: OrderT }) {
+  const paymentLabel = cashLabel(order);
+
+  return (
+    <section className="print-receipt" aria-label="Printable receipt">
+      <header className="print-receipt-header">
+        <h1>{RESTAURANT.name.toUpperCase()}</h1>
+        <p>{RESTAURANT.tagline}</p>
+        <p>{clockTime(order.createdAt)} · {order.orderType === "delivery" ? "DELIVERY" : "PICKUP"}</p>
+      </header>
+
+      <div className="print-receipt-rule" />
+      <ul className="print-receipt-items">
+        {order.items.map((item) => (
+          <li key={item.id}>
+            <span>{item.qty} × {item.itemName}{item.extrasText ? ` + ${item.extrasText}` : ""}</span>
+            <strong>{rand(item.totalCents)}</strong>
+          </li>
+        ))}
+      </ul>
+
+      <div className="print-receipt-rule" />
+      <dl className="print-receipt-totals">
+        <div><dt>Subtotal</dt><dd>{rand(order.subtotalCents)}</dd></div>
+        <div><dt>{order.orderType === "delivery" ? "Delivery fee" : "Delivery fee"}</dt><dd>{order.deliveryFeeCents === 0 ? "Free" : rand(order.deliveryFeeCents)}</dd></div>
+        <div className="print-receipt-total"><dt>TOTAL</dt><dd>{rand(order.totalCents)}</dd></div>
+      </dl>
+
+      <div className="print-receipt-rule" />
+      <div className="print-receipt-payment">
+        <strong>{paymentLabel}</strong>
+        <span>{clockTime(order.createdAt)}</span>
+      </div>
+      <p className="print-receipt-customer">Customer <span>{order.customerName} · {order.phone}</span></p>
+
+      <div className="print-receipt-rule" />
+      <p className="print-receipt-order">Order #{order.orderNumber}</p>
+      <p className="print-receipt-thanks">Thank you — see you soon!</p>
+    </section>
+  );
+}
+
+function cashLabel(order: OrderT) {
+  if (order.paymentStatus === "pay_at_counter") return "CASH";
+  return `${PROVIDER_LABEL[order.paymentProvider] ?? order.paymentProvider}`.toUpperCase();
 }
 
 function ProviderIconWrap({ className }: { className?: string }) {
